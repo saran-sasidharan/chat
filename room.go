@@ -50,6 +50,7 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	socket, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		log.Fatal("ServeHTTP:", err)
+		return
 	}
 	client := &client{
 		socket: socket,
@@ -57,6 +58,7 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		room:   r,
 	}
 	r.join <- client
+	defer func() { r.leave <- client }()
 	go client.write()
 	client.read()
 }
