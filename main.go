@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -24,15 +25,15 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	addr := flag.String("addr", "", "The address of the application")
+	port := flag.String("port", "", "Port to listen to")
 	flag.Parse()
 
-	if *addr == "" {
+	if *port == "" {
 		p := os.Getenv("PORT")
 		if p == "" {
 			log.Fatal("port/host not provided")
 		}
-		*addr = p
+		*port = p
 	}
 
 	r := newRoom()
@@ -42,8 +43,8 @@ func main() {
 
 	go r.run()
 
-	log.Println("Starting web server on", *addr)
-	err := http.ListenAndServe(*addr, nil)
+	log.Println("Starting web server on", *port)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", *port), nil)
 	if err != nil {
 		log.Fatal("ListenAndServe", err)
 	}
