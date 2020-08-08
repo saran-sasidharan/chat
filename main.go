@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"sync"
 )
@@ -23,8 +24,16 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	addr := flag.String("addr", ":8080", "The address of the application")
+	addr := flag.String("addr", "", "The address of the application")
 	flag.Parse()
+
+	if *addr == "" {
+		p := os.Getenv("PORT")
+		if p == "" {
+			log.Fatal("port/host not provided")
+		}
+		*addr = p
+	}
 
 	r := newRoom()
 

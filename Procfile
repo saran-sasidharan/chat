@@ -1,1 +1,1 @@
-web: chat
+web: bin/chat
